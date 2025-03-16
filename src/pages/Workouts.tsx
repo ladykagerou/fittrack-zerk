@@ -15,6 +15,7 @@ import { useWorkouts } from '@/hooks/useWorkouts';
 import ScheduleWorkoutDialog from '@/components/workout/ScheduleWorkoutDialog';
 import WorkoutDetailDialog from '@/components/workout/WorkoutDetailDialog';
 import WorkoutTrackingStats from '@/components/workout/WorkoutTrackingStats';
+import WorkoutCalendar from '@/components/workout/WorkoutCalendar';
 
 const Workouts = () => {
   const {
@@ -61,6 +62,14 @@ const Workouts = () => {
             </Button>
           </div>
           
+          {/* Workout Calendar - New Primary Component */}
+          <div className="mb-8">
+            <WorkoutCalendar 
+              scheduledWorkouts={scheduledWorkouts}
+              onToggleCompletion={toggleWorkoutCompletion}
+            />
+          </div>
+          
           {/* Add Workout Stats */}
           {scheduledWorkouts.length > 0 && (
             <div className="mb-8">
@@ -70,14 +79,14 @@ const Workouts = () => {
           
           <Tabs defaultValue="list" className="space-y-6">
             <TabsList>
-              <TabsTrigger value="list">Treinos e agenda</TabsTrigger>
+              <TabsTrigger value="list">Meus Treinos</TabsTrigger>
               {showForm && <TabsTrigger value="form">Novo treino</TabsTrigger>}
             </TabsList>
             
             <TabsContent value="list" className="space-y-6">
               <WorkoutList 
                 workouts={workouts}
-                scheduledWorkouts={scheduledWorkouts}
+                scheduledWorkouts={[]} // No need to show scheduled workouts in list anymore
                 onEditWorkout={handleEditWorkout}
                 onDeleteWorkout={handleDeleteWorkout}
                 onScheduleWorkout={handleScheduleWorkout}
