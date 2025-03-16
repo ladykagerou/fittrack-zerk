@@ -14,6 +14,7 @@ import {
 import { useWorkouts } from '@/hooks/useWorkouts';
 import ScheduleWorkoutDialog from '@/components/workout/ScheduleWorkoutDialog';
 import WorkoutDetailDialog from '@/components/workout/WorkoutDetailDialog';
+import WorkoutTrackingStats from '@/components/workout/WorkoutTrackingStats';
 
 const Workouts = () => {
   const {
@@ -34,7 +35,8 @@ const Workouts = () => {
     handleDeleteWorkout,
     handleViewWorkout,
     handleScheduleWorkout,
-    confirmScheduleWorkout
+    confirmScheduleWorkout,
+    toggleWorkoutCompletion
   } = useWorkouts();
 
   return (
@@ -59,6 +61,13 @@ const Workouts = () => {
             </Button>
           </div>
           
+          {/* Add Workout Stats */}
+          {scheduledWorkouts.length > 0 && (
+            <div className="mb-8">
+              <WorkoutTrackingStats scheduledWorkouts={scheduledWorkouts} />
+            </div>
+          )}
+          
           <Tabs defaultValue="list" className="space-y-6">
             <TabsList>
               <TabsTrigger value="list">Treinos e agenda</TabsTrigger>
@@ -73,6 +82,7 @@ const Workouts = () => {
                 onDeleteWorkout={handleDeleteWorkout}
                 onScheduleWorkout={handleScheduleWorkout}
                 onViewWorkout={handleViewWorkout}
+                onToggleCompletion={toggleWorkoutCompletion}
               />
             </TabsContent>
             

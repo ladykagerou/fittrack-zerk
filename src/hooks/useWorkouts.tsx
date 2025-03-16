@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { toast } from 'sonner';
@@ -197,6 +196,24 @@ export const useWorkouts = () => {
     toast.success(`Treino agendado para ${format(scheduleDate, 'dd/MM/yyyy')}`);
   };
 
+  const toggleWorkoutCompletion = (scheduledWorkoutId: string) => {
+    setScheduledWorkouts(prev => 
+      prev.map(sw => 
+        sw.id === scheduledWorkoutId 
+          ? { ...sw, completed: !sw.completed } 
+          : sw
+      )
+    );
+    
+    const workoutCompleted = scheduledWorkouts.find(sw => sw.id === scheduledWorkoutId)?.completed;
+    
+    toast.success(
+      workoutCompleted 
+        ? 'Treino marcado como não concluído' 
+        : 'Treino marcado como concluído'
+    );
+  };
+
   return {
     workouts,
     scheduledWorkouts,
@@ -216,6 +233,7 @@ export const useWorkouts = () => {
     handleDeleteWorkout,
     handleViewWorkout,
     handleScheduleWorkout,
-    confirmScheduleWorkout
+    confirmScheduleWorkout,
+    toggleWorkoutCompletion
   };
 };
