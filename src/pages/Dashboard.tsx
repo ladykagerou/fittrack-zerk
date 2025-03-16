@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { 
   Activity, 
@@ -17,6 +16,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import Navbar from '@/components/Navbar';
 import { Link } from 'react-router-dom';
+import { cn } from '@/lib/utils';
 
 const Dashboard = () => {
   const [workoutsCompleted, setWorkoutsCompleted] = useState(0);

@@ -1,7 +1,7 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
+import { Edit, CalendarIcon } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import WorkoutForm from '@/components/WorkoutForm';
 import WorkoutList from '@/components/WorkoutList';
@@ -22,13 +22,21 @@ import {
   TabsTrigger,
 } from '@/components/ui/tabs';
 import {
-  Calendar,
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
+import { Calendar } from '@/components/ui/calendar';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 const Workouts = () => {
   const [workouts, setWorkouts] = useState<Workout[]>([]);
@@ -40,7 +48,6 @@ const Workouts = () => {
   const [scheduleDate, setScheduleDate] = useState<Date>(new Date());
   const [workoutToSchedule, setWorkoutToSchedule] = useState<string | null>(null);
 
-  // Load workouts and scheduled workouts from localStorage on component mount
   useEffect(() => {
     const savedWorkouts = localStorage.getItem('workouts');
     const savedSchedules = localStorage.getItem('scheduledWorkouts');
@@ -48,7 +55,6 @@ const Workouts = () => {
     if (savedWorkouts) {
       try {
         const parsedWorkouts = JSON.parse(savedWorkouts);
-        // Convert date strings back to Date objects
         const formattedWorkouts = parsedWorkouts.map((w: any) => ({
           ...w,
           createdAt: new Date(w.createdAt)
@@ -58,14 +64,12 @@ const Workouts = () => {
         console.error('Error parsing workouts:', e);
       }
     } else {
-      // Create sample data if no workouts exist
       createSampleData();
     }
     
     if (savedSchedules) {
       try {
         const parsedSchedules = JSON.parse(savedSchedules);
-        // Convert date strings back to Date objects
         const formattedSchedules = parsedSchedules.map((s: any) => ({
           ...s,
           date: new Date(s.date),
@@ -81,7 +85,6 @@ const Workouts = () => {
     }
   }, []);
 
-  // Save workouts and scheduled workouts to localStorage whenever they change
   useEffect(() => {
     localStorage.setItem('workouts', JSON.stringify(workouts));
   }, [workouts]);
@@ -122,7 +125,6 @@ const Workouts = () => {
     
     setWorkouts(sampleWorkouts);
     
-    // Create some scheduled workouts
     const today = new Date();
     const tomorrow = new Date();
     tomorrow.setDate(today.getDate() + 1);
@@ -146,14 +148,12 @@ const Workouts = () => {
   };
 
   const handleSaveWorkout = (workoutData: Omit<Workout, 'id' | 'createdAt'>) => {
-    // Generate IDs for the exercises
     const exercisesWithIds = workoutData.exercises.map(exercise => ({
       ...exercise,
       id: uuidv4()
     }));
     
     if (editingWorkout) {
-      // Update existing workout
       const updatedWorkouts = workouts.map(workout => 
         workout.id === editingWorkout 
           ? { 
@@ -168,7 +168,6 @@ const Workouts = () => {
       setWorkouts(updatedWorkouts);
       toast.success('Treino atualizado com sucesso!');
     } else {
-      // Create new workout
       const newWorkout: Workout = {
         id: uuidv4(),
         name: workoutData.name,
@@ -191,10 +190,7 @@ const Workouts = () => {
   };
 
   const handleDeleteWorkout = (id: string) => {
-    // Remove the workout
     setWorkouts(workouts.filter(workout => workout.id !== id));
-    
-    // Remove any scheduled workouts that use this workout
     setScheduledWorkouts(scheduledWorkouts.filter(
       scheduledWorkout => scheduledWorkout.workout.id !== id
     ));
@@ -288,7 +284,6 @@ const Workouts = () => {
         </main>
       </div>
       
-      {/* Workout Detail Dialog */}
       <Dialog open={!!selectedWorkout} onOpenChange={(open) => !open && setSelectedWorkout(null)}>
         <DialogContent className="sm:max-w-lg">
           <DialogHeader>
@@ -345,14 +340,13 @@ const Workouts = () => {
                 }
               }}
             >
-              <CalendarDays className="mr-2 h-4 w-4" />
+              <CalendarIcon className="mr-2 h-4 w-4" />
               Agendar
             </Button>
           </div>
         </DialogContent>
       </Dialog>
       
-      {/* Schedule Workout Dialog */}
       <Dialog open={showScheduleDialog} onOpenChange={setShowScheduleDialog}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
@@ -372,7 +366,7 @@ const Workouts = () => {
                     !scheduleDate && "text-muted-foreground"
                   )}
                 >
-                  <CalendarDays className="mr-2 h-4 w-4" />
+                  <CalendarIcon className="mr-2 h-4 w-4" />
                   {scheduleDate ? format(scheduleDate, "dd/MM/yyyy") : "Selecione uma data"}
                 </Button>
               </PopoverTrigger>

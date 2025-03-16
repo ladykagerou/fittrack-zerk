@@ -3,138 +3,183 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dumbbell } from 'lucide-react';
 import { toast } from 'sonner';
+import { User } from '@/lib/types';
+import { v4 as uuidv4 } from 'uuid';
 
 const Login = () => {
-  const [isLogin, setIsLogin] = useState(true);
-  const [isLoading, setIsLoading] = useState(false);
-  const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const navigate = useNavigate();
+  const [loginEmail, setLoginEmail] = useState('');
+  const [loginPassword, setLoginPassword] = useState('');
+  const [registerUsername, setRegisterUsername] = useState('');
+  const [registerEmail, setRegisterEmail] = useState('');
+  const [registerPassword, setRegisterPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
     
-    // Simulate authentication - in a real app, you would connect to a backend
-    setTimeout(() => {
-      setIsLoading(false);
+    // Em um cenário real, isso seria uma chamada para uma API
+    // que verificaria as credenciais
+    if (loginEmail && loginPassword) {
+      // Simular login bem-sucedido
+      const user: User = {
+        id: '1',
+        username: loginEmail.split('@')[0],
+        email: loginEmail,
+      };
       
-      // For demo purposes, just navigate to dashboard for any login
-      localStorage.setItem('user', JSON.stringify({ id: '1', username, email }));
-      toast.success(isLogin ? 'Login successful!' : 'Account created successfully!');
+      // Salvar no localStorage para simular um token de sessão
+      localStorage.setItem('user', JSON.stringify(user));
+      
+      toast.success('Login realizado com sucesso!');
       navigate('/dashboard');
-    }, 1500);
+    } else {
+      toast.error('Por favor, preencha todos os campos!');
+    }
+  };
+
+  const handleRegister = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    // Verificações básicas
+    if (!registerUsername || !registerEmail || !registerPassword || !confirmPassword) {
+      toast.error('Por favor, preencha todos os campos!');
+      return;
+    }
+    
+    if (registerPassword !== confirmPassword) {
+      toast.error('As senhas não coincidem!');
+      return;
+    }
+    
+    // Em um cenário real, isso enviaria os dados para uma API
+    // que registraria o novo usuário no banco de dados
+    
+    // Simular registro bem-sucedido
+    const newUser: User = {
+      id: uuidv4(),
+      username: registerUsername,
+      email: registerEmail,
+    };
+    
+    // Salvar no localStorage para simular um token de sessão
+    localStorage.setItem('user', JSON.stringify(newUser));
+    
+    toast.success('Registro realizado com sucesso!');
+    navigate('/dashboard');
   };
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-50 p-4 animate-fadeIn">
-      <div className="absolute top-0 left-0 w-full h-full bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxkZWZzPjxwYXR0ZXJuIGlkPSJwYXR0ZXJuIiB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgcGF0dGVyblRyYW5zZm9ybT0icm90YXRlKDI1KSI+PGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMC41IiBmaWxsPSJyZ2JhKDAsIDAsIDI1NSwgMC4wMildIC8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI3BhdHRlcm4pIiAvPjwvc3ZnPg==')] opacity-30 pointer-events-none"></div>
-      
-      <div className="w-full max-w-md animate-slideUp">
-        <div className="flex justify-center mb-8">
-          <div className="flex items-center justify-center w-16 h-16 rounded-full bg-primary text-white shadow-lg">
-            <Dumbbell className="w-8 h-8" />
+    <div className="flex min-h-screen bg-secondary/30 items-center justify-center p-4">
+      <div className="w-full max-w-md">
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center justify-center bg-primary/10 p-2 rounded-full mb-4">
+            <Dumbbell className="h-10 w-10 text-primary" />
           </div>
+          <h1 className="text-3xl font-bold">FitTrack</h1>
+          <p className="text-muted-foreground mt-2">
+            Acompanhe seus treinos e progresso físico
+          </p>
         </div>
         
-        <Card className="glass border shadow-xl">
-          <CardHeader className="space-y-1 text-center">
-            <CardTitle className="text-3xl font-bold tracking-tight">
-              {isLogin ? 'Bem-vindo de volta' : 'Criar conta'}
+        <Card className="shadow-lg">
+          <CardHeader className="space-y-1">
+            <CardTitle className="text-2xl text-center">
+              Bem-vindo de volta
             </CardTitle>
-            <CardDescription>
-              {isLogin ? 'Entre com suas credenciais' : 'Preencha os dados para se cadastrar'}
+            <CardDescription className="text-center">
+              Entre ou crie uma conta para começar
             </CardDescription>
           </CardHeader>
-          
-          <form onSubmit={handleSubmit}>
-            <CardContent className="space-y-4">
-              {!isLogin && (
-                <div className="space-y-2">
-                  <Label htmlFor="username">Nome de usuário</Label>
-                  <Input 
-                    id="username" 
-                    type="text" 
-                    placeholder="Seu nome de usuário" 
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    required
-                    className="transition-all duration-200 focus:ring-2 focus:ring-primary/50"
-                  />
-                </div>
-              )}
+          <CardContent>
+            <Tabs defaultValue="login" className="w-full">
+              <TabsList className="grid w-full grid-cols-2 mb-4">
+                <TabsTrigger value="login">Login</TabsTrigger>
+                <TabsTrigger value="register">Registro</TabsTrigger>
+              </TabsList>
               
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input 
-                  id="email" 
-                  type="email" 
-                  placeholder="seu@email.com" 
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  className="transition-all duration-200 focus:ring-2 focus:ring-primary/50"
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <Label htmlFor="password">Senha</Label>
-                  {isLogin && (
-                    <a 
-                      href="#" 
-                      className="text-sm text-primary hover:underline"
-                      onClick={(e) => e.preventDefault()}
-                    >
-                      Esqueceu a senha?
-                    </a>
-                  )}
-                </div>
-                <Input 
-                  id="password" 
-                  type="password" 
-                  placeholder="••••••••" 
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  className="transition-all duration-200 focus:ring-2 focus:ring-primary/50"
-                />
-              </div>
-            </CardContent>
-            
-            <CardFooter className="flex flex-col space-y-4">
-              <Button 
-                type="submit" 
-                className="w-full transition-all duration-200 shadow-md hover:shadow-lg"
-                disabled={isLoading}
-              >
-                {isLoading ? (
-                  <div className="flex items-center justify-center">
-                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
-                    {isLogin ? 'Entrando...' : 'Criando...'}
+              <TabsContent value="login">
+                <form onSubmit={handleLogin}>
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="email">E-mail</Label>
+                      <Input 
+                        id="email" 
+                        type="email" 
+                        placeholder="seu@email.com" 
+                        value={loginEmail}
+                        onChange={(e) => setLoginEmail(e.target.value)}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="password">Senha</Label>
+                      <Input 
+                        id="password" 
+                        type="password" 
+                        value={loginPassword}
+                        onChange={(e) => setLoginPassword(e.target.value)}
+                      />
+                    </div>
+                    <Button type="submit" className="w-full">
+                      Entrar
+                    </Button>
                   </div>
-                ) : (
-                  isLogin ? 'Entrar' : 'Criar conta'
-                )}
-              </Button>
+                </form>
+              </TabsContent>
               
-              <p className="text-center text-sm">
-                {isLogin ? 'Não tem uma conta?' : 'Já tem uma conta?'}{' '}
-                <button
-                  type="button"
-                  className="text-primary font-medium hover:underline"
-                  onClick={() => setIsLogin(!isLogin)}
-                >
-                  {isLogin ? 'Cadastre-se' : 'Entre'}
-                </button>
-              </p>
-            </CardFooter>
-          </form>
+              <TabsContent value="register">
+                <form onSubmit={handleRegister}>
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="username">Nome de usuário</Label>
+                      <Input 
+                        id="username" 
+                        placeholder="seunome" 
+                        value={registerUsername}
+                        onChange={(e) => setRegisterUsername(e.target.value)}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="register-email">E-mail</Label>
+                      <Input 
+                        id="register-email" 
+                        type="email" 
+                        placeholder="seu@email.com" 
+                        value={registerEmail}
+                        onChange={(e) => setRegisterEmail(e.target.value)}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="register-password">Senha</Label>
+                      <Input 
+                        id="register-password" 
+                        type="password" 
+                        value={registerPassword}
+                        onChange={(e) => setRegisterPassword(e.target.value)}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="confirm-password">Confirmar senha</Label>
+                      <Input 
+                        id="confirm-password" 
+                        type="password" 
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                      />
+                    </div>
+                    <Button type="submit" className="w-full">
+                      Criar conta
+                    </Button>
+                  </div>
+                </form>
+              </TabsContent>
+            </Tabs>
+          </CardContent>
         </Card>
       </div>
     </div>
